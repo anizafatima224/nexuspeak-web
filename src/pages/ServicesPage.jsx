@@ -1,59 +1,65 @@
-import React from 'react';
-import { Palette, Briefcase, TrendingUp, Code, CheckCircle } from 'lucide-react';
-import Button from '../components/common/Button';
+import React, { useState } from 'react';
+import { Search, Code, Palette, TrendingUp, Cpu } from 'lucide-react';
 
 const ServicesPage = () => {
-  const serviceList = [
-    {
-      title: "Creative Design",
-      desc: "Branding, graphic design, UI/UX design, and design systems.",
-      icon: <Palette className="w-8 h-8 text-primaryBlue" />,
-      features: ["Brand Identity", "UI/UX Prototyping", "Graphic Design"]
-    },
-    {
-      title: "Business Consulting",
-      desc: "Strategy, business growth, financial planning, and operational tools.",
-      icon: <Briefcase className="w-8 h-8 text-primaryBlue" />,
-      features: ["Growth Strategy", "Financial Planning", "Process Optimization"]
-    },
-    {
-      title: "Digital Marketing",
-      desc: "SEO, social media management, lead generation, and content strategies.",
-      icon: <TrendingUp className="w-8 h-8 text-primaryBlue" />,
-      features: ["SEO Optimization", "Social Media Campaigns", "Lead Generation"]
-    },
-    {
-      title: "Software Development",
-      desc: "Full-stack web applications, mobile apps, and custom software architectures.",
-      icon: <Code className="w-8 h-8 text-primaryBlue" />,
-      features: ["React & Node.js Web Apps", "Flutter Mobile Apps", "API Integration"]
-    }
+  const [search, setSearch] = useState('');
+  const [category, setCategory] = useState('All');
+
+  const services = [
+    { id: 1, title: 'Web App Development', cat: 'Development', desc: 'Custom React & Node.js scalable web applications.', icon: <Code /> },
+    { id: 2, title: 'UI/UX Redesign', cat: 'Design', desc: 'Modern interfaces for web and mobile platforms.', icon: <Palette /> },
+    { id: 3, title: 'SEO Optimization', cat: 'Marketing', desc: 'Rank #1 on Google with data-driven strategies.', icon: <TrendingUp /> },
+    { id: 4, title: 'AI Automation', cat: 'Development', desc: 'Integrate AI workflows & chatbots in your app.', icon: <Cpu /> },
   ];
 
+  const filteredServices = services.filter(s => {
+    const matchesSearch = s.title.toLowerCase().includes(search.toLowerCase()) || s.desc.toLowerCase().includes(search.toLowerCase());
+    const matchesCat = category === 'All' || s.cat === category;
+    return matchesSearch && matchesCat;
+  });
+
   return (
-    <div className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <div className="text-center mb-16">
-        <h1 className="text-4xl font-extrabold text-darkText">Our Services</h1>
-        <p className="text-lightText text-lg mt-3">Comprehensive solutions built to scale your agency operations.</p>
+    <div className="py-12 px-4 max-w-6xl mx-auto">
+      <div className="text-center mb-8">
+        <h1 className="text-4xl font-extrabold text-darkText">Explore Our Services</h1>
+        <p className="text-lightText mt-2">Filter through our agency deliverables</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {serviceList.map((service, index) => (
-          <div key={index} className="bg-white border border-gray-200 p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="p-3 bg-lightSky rounded-xl">{service.icon}</div>
-              <h3 className="text-2xl font-bold text-darkText">{service.title}</h3>
-            </div>
-            <p className="text-lightText mb-6">{service.desc}</p>
-            <ul className="space-y-2 mb-8">
-              {service.features.map((feat, fIdx) => (
-                <li key={fIdx} className="flex items-center gap-2 text-darkText text-sm">
-                  <CheckCircle className="w-4 h-4 text-successGreen" />
-                  {feat}
-                </li>
-              ))}
-            </ul>
-            <Button variant="outline" className="w-full">Request Quote</Button>
+      {/* Search & Filter Bar */}
+      <div className="flex flex-col md:flex-row gap-4 mb-8 justify-between items-center">
+        <div className="relative w-full md:w-1/2">
+          <Search className="absolute left-3 top-3.5 text-gray-400 w-5 h-5" />
+          <input 
+            type="text" 
+            placeholder="Search services..." 
+            value={search} 
+            onChange={(e) => setSearch(e.target.value)} 
+            className="w-full pl-10 p-3 border rounded-lg focus:outline-primaryBlue"
+          />
+        </div>
+        <div className="flex gap-2 w-full md:w-auto overflow-x-auto">
+          {['All', 'Development', 'Design', 'Marketing'].map((cat) => (
+            <button 
+              key={cat} 
+              onClick={() => setCategory(cat)}
+              className={`px-4 py-2 rounded-lg font-semibold text-sm transition-colors ${
+                category === cat ? 'bg-primaryBlue text-white' : 'bg-gray-100 text-darkText hover:bg-gray-200'
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Services Grid */}
+      <div className="grid md:grid-cols-2 gap-6">
+        {filteredServices.map(s => (
+          <div key={s.id} className="p-6 border rounded-xl bg-white hover:shadow-md transition-shadow">
+            <div className="p-3 bg-lightSky w-fit rounded-lg text-primaryBlue mb-4">{s.icon}</div>
+            <h3 className="text-xl font-bold text-darkText">{s.title}</h3>
+            <span className="inline-block bg-gray-100 text-xs px-2.5 py-1 rounded mt-1 text-lightText font-semibold">{s.cat}</span>
+            <p className="text-lightText text-sm mt-3">{s.desc}</p>
           </div>
         ))}
       </div>
